@@ -25,6 +25,8 @@ func (s ByCreatedDate) Less(i, j int) bool {
 		}
 
 		return true
+	} else if t1.Time.Equal(t2.Time) {
+		return s[i].TodoID < s[j].TodoID
 	}
 
 	return t1.Time.Before(t2.Time)
@@ -55,6 +57,8 @@ func (s ByDueDate) Less(i, j int) bool {
 		}
 
 		return true
+	} else if t1.Time.Equal(t2.Time) {
+		return s[i].TodoID < s[j].TodoID
 	}
 
 	return t1.Time.Before(t2.Time)
@@ -81,6 +85,8 @@ func (s ByPriority) Less(i, j int) bool {
 		return false
 	} else if s[i].Priority > 0 && s[j].Priority == 0 {
 		return true
+	} else if s[i].Priority == 0 && s[j].Priority == 0 {
+		return s[i].TodoID < s[j].TodoID
 	}
 
 	return s[i].Priority < s[j].Priority
