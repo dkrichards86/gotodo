@@ -30,3 +30,8 @@ COMMANDS:
 GLOBAL OPTIONS:
    --help, -h  show help (default: false)
 ```
+
+## Contributing
+
+Ff you spot bugs or have features that you'd really like to see in gotodo, please check out the 
+[contributing page](.github/CONTRIBUTING.md)
