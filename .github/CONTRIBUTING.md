@@ -2,7 +2,7 @@
 
 [legal]: https://help.github.com/articles/github-terms-of-service/#6-contributions-under-repository-license
 [license]: ../LICENSE.md
-[code-of-conduct]: CODE-OF-CONDUCT.md
+[code-of-conduct]: CODE_OF_CONDUCT.md
 
 Thanks for your interest in contributing to the gotodo.
 
