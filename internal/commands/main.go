@@ -11,11 +11,22 @@ import (
 	cli "github.com/urfave/cli/v2"
 
 	"github.com/dkrichards86/gotodo/internal/gotodo"
+	"github.com/olekukonko/tablewriter"
 )
 
 func getManager() *gotodo.TodoManager {
 	storage := &gotodo.BoltStorage{}
 	return &gotodo.TodoManager{storage}
+}
+
+func drawTable(header []string, data [][]string) {
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader(header)
+	table.SetAutoWrapText(false)
+	table.SetAutoFormatHeaders(true)
+	table.SetBorder(false)
+	table.AppendBulk(data)
+	table.Render()
 }
 
 func lsAction(c *cli.Context) error {
@@ -50,9 +61,13 @@ func lsAction(c *cli.Context) error {
 		sort.Sort(gotodo.ByPriority(items))
 	}
 
-	for _, todo := range items {
-		fmt.Printf("%d %s\n", todo.TodoID, todo)
+	header := []string{"ID", "Todo"}
+	data := make([][]string, len(items))
+	for i, todo := range items {
+		data[i] = []string{fmt.Sprintf("%d", todo.TodoID), todo.String()}
 	}
+
+	drawTable(header, data)
 
 	return nil
 }
@@ -293,9 +308,14 @@ func projectsAction(c *cli.Context) error {
 	if err != nil {
 		return err
 	}
-	for _, tag := range items {
-		fmt.Println(tag)
+
+	header := []string{"Projects"}
+	data := make([][]string, len(items))
+	for i, tag := range items {
+		data[i] = []string{tag}
 	}
+
+	drawTable(header, data)
 
 	return nil
 }
@@ -307,9 +327,14 @@ func contextsAction(c *cli.Context) error {
 	if err != nil {
 		return err
 	}
-	for _, tag := range items {
-		fmt.Println(tag)
+
+	header := []string{"Contexts"}
+	data := make([][]string, len(items))
+	for i, tag := range items {
+		data[i] = []string{tag}
 	}
+
+	drawTable(header, data)
 
 	return nil
 }
@@ -321,9 +346,14 @@ func attributesAction(c *cli.Context) error {
 	if err != nil {
 		return err
 	}
-	for _, tag := range items {
-		fmt.Println(tag)
+
+	header := []string{"Attributes"}
+	data := make([][]string, len(items))
+	for i, tag := range items {
+		data[i] = []string{tag}
 	}
+
+	drawTable(header, data)
 
 	return nil
 }
