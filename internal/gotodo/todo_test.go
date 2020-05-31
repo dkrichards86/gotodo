@@ -144,3 +144,39 @@ func TestFromStringParts(t *testing.T) {
 	assert.Equal(t, "2020-04-29", todo.CreationDate.Display())
 	assert.Equal(t, "2020-04-29", todo.Description)
 }
+
+func TestHasProject(t *testing.T) {
+	var todoStr string
+	var todo *Todo
+
+	todoStr = "Add tests for hasXXX helpers @codehealth +gotodo due:2020-06-01"
+	todo = FromString(todoStr)
+
+	assert.Equal(t, false, todo.hasProject("codehealth"))
+	assert.Equal(t, true, todo.hasProject("gotodo"))
+	assert.Equal(t, false, todo.hasProject("due"))
+}
+
+func TestHasContext(t *testing.T) {
+	var todoStr string
+	var todo *Todo
+
+	todoStr = "Add tests for hasXXX helpers @codehealth +gotodo due:2020-06-01"
+	todo = FromString(todoStr)
+
+	assert.Equal(t, true, todo.hasContext("codehealth"))
+	assert.Equal(t, false, todo.hasContext("gotodo"))
+	assert.Equal(t, false, todo.hasContext("due"))
+}
+
+func TestHasAttribute(t *testing.T) {
+	var todoStr string
+	var todo *Todo
+
+	todoStr = "Add tests for hasXXX helpers @codehealth +gotodo due:2020-06-01"
+	todo = FromString(todoStr)
+
+	assert.Equal(t, false, todo.hasAttribute("codehealth"))
+	assert.Equal(t, false, todo.hasAttribute("gotodo"))
+	assert.Equal(t, true, todo.hasAttribute("due"))
+}

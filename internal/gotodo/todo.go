@@ -139,3 +139,33 @@ func (me *Todo) String() string {
 
 	return strings.Join(parts, " ")
 }
+
+// hasProject checks a todo.Projects for a specific project
+func (me *Todo) hasProject(project string) bool {
+	if len(me.Projects) == 0 {
+		return false
+	}
+
+	_, exists := me.Projects[project]
+	return exists
+}
+
+// hasContext checks a todo.Contexts for a specific context
+func (me *Todo) hasContext(context string) bool {
+	if len(me.Contexts) == 0 {
+		return false
+	}
+
+	_, exists := me.Contexts[context]
+	return exists
+}
+
+// hasAttribute checks a todo.CustomAttributes for a specific attribute
+func (me *Todo) hasAttribute(attribute string) bool {
+	if len(me.CustomAttributes) == 0 {
+		return false
+	}
+
+	_, exists := me.CustomAttributes[attribute]
+	return exists
+}
