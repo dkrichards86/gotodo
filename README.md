@@ -37,5 +37,5 @@ GLOBAL OPTIONS:
 
 ## Contributing
 
-Ff you spot bugs or have features that you'd really like to see in gotodo, please check out the 
+If you spot bugs or have features that you'd really like to see in gotodo, please check out the 
 [contributing page](.github/CONTRIBUTING.md)
