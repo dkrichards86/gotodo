@@ -20,3 +20,6 @@ jobs:
 
       - name: Run go vet
         run: go vet ./...
+
+      - name: Go report card
+        uses: creekorful/goreportcard-action@v1.0
