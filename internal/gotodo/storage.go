@@ -1,6 +1,7 @@
 package gotodo
 
 import (
+	"errors"
 	"os"
 	"strconv"
 
@@ -137,6 +138,11 @@ func (me *BoltStorage) Get(todoID int) (*Todo, error) {
 		return todo, err
 	}
 
+	// Check to see if the todo exists
+	if todo.Description == "" {
+		return todo, errors.New("Todo ID does not exist")
+	}
+
 	return todo, nil
 }
 
@@ -155,7 +161,6 @@ func (me *BoltStorage) List() (TodoList, error) {
 		c := b.Cursor()
 
 		for k, v := c.First(); k != nil; k, v = c.Next() {
-			// fmt.Printf("%s, %s\n", k, v)
 			todo := FromString(string(v))
 			todo.TodoID, _ = strconv.Atoi(string(k))
 			items = append(items, todo)

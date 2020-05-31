@@ -1,13 +1,8 @@
 name: Tests
 on: [push, pull_request]
 jobs:
-  build:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-    runs-on: ${{ matrix.os }}
-
+  test:
+    runs-on: ubuntu-latest
     steps:
       - name: Set up Go 1.14
         uses: actions/setup-go@v2-beta
@@ -22,6 +17,3 @@ jobs:
 
       - name: Run tests
         run: go test -race ./...
-
-      - name: Build
-        run: go build -v ./cmd/gotodo
