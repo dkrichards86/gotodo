@@ -95,6 +95,20 @@ func (me *BoltStorage) getDB() (*bolt.DB, error) {
 	return db, nil
 }
 
+// checkKey checks for the existence of a key in Bolt.
+func (me *BoltStorage) checkKey(key string, db *bolt.DB) error {
+	return db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("Todos"))
+
+		v := b.Get([]byte(key))
+		if v == nil {
+			return errors.New("Todo ID does not exist")
+		}
+
+		return nil
+	})
+}
+
 // Create inserts a new *Todo
 func (me *BoltStorage) Create(todo *Todo) error {
 	db, err := me.getDB()
@@ -123,12 +137,15 @@ func (me *BoltStorage) Get(todoID int) (*Todo, error) {
 	}
 	defer db.Close()
 
+	key := strconv.Itoa(todoID)
+	err = me.checkKey(key, db)
+	if err != nil {
+		return nil, err
+	}
+
 	err = db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("Todos"))
-
-		key := strconv.Itoa(todoID)
 		v := b.Get([]byte(key))
-
 		todo = FromString(string(v))
 		todo.TodoID = todoID
 		return nil
@@ -136,11 +153,6 @@ func (me *BoltStorage) Get(todoID int) (*Todo, error) {
 
 	if err != nil {
 		return todo, err
-	}
-
-	// Check to see if the todo exists
-	if todo.Description == "" {
-		return todo, errors.New("Todo ID does not exist")
 	}
 
 	return todo, nil
@@ -180,11 +192,17 @@ func (me *BoltStorage) Update(todoID int, todo *Todo) error {
 	}
 	defer db.Close()
 
+	key := strconv.Itoa(todoID)
+	value := todo.String()
+
+	// make sure the key exists before working with it
+	err = me.checkKey(key, db)
+	if err != nil {
+		return err
+	}
+
 	return db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("Todos"))
-
-		key := strconv.Itoa(todoID)
-		value := todo.String()
 		return b.Put([]byte(key), []byte(value))
 	})
 }
@@ -197,10 +215,16 @@ func (me *BoltStorage) Delete(todoID int) error {
 	}
 	defer db.Close()
 
+	key := strconv.Itoa(todoID)
+
+	// make sure the key exists before working with it
+	err = me.checkKey(key, db)
+	if err != nil {
+		return err
+	}
+
 	return db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte("Todos"))
-
-		key := strconv.Itoa(todoID)
 		return b.Delete([]byte(key))
 	})
 }
