@@ -42,34 +42,16 @@ func (me *TodoManager) List(listFilter TodoListFilter) (TodoList, error) {
 			continue
 		}
 
-		if listFilter.Context != "" {
-			if len(todo.Contexts) == 0 {
-				continue
-			}
-
-			if _, ok := todo.Contexts[listFilter.Context]; !ok {
-				continue
-			}
+		if listFilter.Project != "" && !todo.hasProject(listFilter.Project) {
+			continue
 		}
 
-		if listFilter.Project != "" {
-			if len(todo.Projects) == 0 {
-				continue
-			}
-
-			if _, ok := todo.Projects[listFilter.Project]; !ok {
-				continue
-			}
+		if listFilter.Context != "" && !todo.hasContext(listFilter.Context) {
+			continue
 		}
 
-		if listFilter.Attribute != "" {
-			if len(todo.CustomAttributes) == 0 {
-				continue
-			}
-
-			if _, ok := todo.CustomAttributes[listFilter.Attribute]; !ok {
-				continue
-			}
+		if listFilter.Attribute != "" && !todo.hasAttribute(listFilter.Attribute) {
+			continue
 		}
 
 		itemsToDisplay = append(itemsToDisplay, todo)
