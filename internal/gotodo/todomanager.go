@@ -74,13 +74,14 @@ func (me *TodoManager) List(listFilter TodoListFilter) (TodoList, error) {
 
 		itemsToDisplay = append(itemsToDisplay, todo)
 	}
+
 	return itemsToDisplay, nil
 }
 
 // Add takes a todotxt string and adds it to the list of todos
-func (me *TodoManager) Add(todoStr string) error {
+func (me *TodoManager) Add(todoStr string) (int, error) {
 	todo := FromString(todoStr)
-	return me.Storage.Create(todo)
+	return todo.TodoID, me.Storage.Create(todo)
 }
 
 // Update takes the ID number of an existing Todo and a parseable todo string and merges

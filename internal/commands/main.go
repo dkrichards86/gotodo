@@ -3,7 +3,6 @@ package commands
 import (
 	"errors"
 	"fmt"
-	"log"
 	"os"
 	"sort"
 	"strconv"
@@ -16,7 +15,7 @@ import (
 
 func getManager() *gotodo.TodoManager {
 	storage := &gotodo.BoltStorage{}
-	return &gotodo.TodoManager{storage}
+	return &gotodo.TodoManager{Storage: storage}
 }
 
 func drawTable(header []string, data [][]string) {
@@ -24,7 +23,7 @@ func drawTable(header []string, data [][]string) {
 	table.SetHeader(header)
 	table.SetAutoWrapText(false)
 	table.SetAutoFormatHeaders(true)
-	table.SetBorder(false)
+	table.SetTablePadding("\t")
 	table.AppendBulk(data)
 	table.Render()
 }
@@ -41,10 +40,10 @@ func lsAction(c *cli.Context) error {
 	}
 
 	listFilter := gotodo.TodoListFilter{
-		status,
-		c.String("project"),
-		c.String("context"),
-		c.String("attribute"),
+		Status:    status,
+		Project:   c.String("project"),
+		Context:   c.String("context"),
+		Attribute: c.String("attribute"),
 	}
 
 	items, err := todoManager.List(listFilter)
@@ -66,7 +65,6 @@ func lsAction(c *cli.Context) error {
 	for i, todo := range items {
 		data[i] = []string{fmt.Sprintf("%d", todo.TodoID), todo.String()}
 	}
-
 	drawTable(header, data)
 
 	return nil
@@ -76,17 +74,20 @@ func addAction(c *cli.Context) error {
 	var err error
 	todoManager := getManager()
 
-	if c.Args().Len() != 1 {
+	if c.NArg() != 1 {
 		return errors.New("No todo message provided")
 	}
 
 	todoStr := c.Args().Get(0)
-	err = todoManager.Add(todoStr)
+	todoID, err := todoManager.Add(todoStr)
 	if err != nil {
 		return err
 	}
 
-	fmt.Println("Todo added!")
+	data := make([][]string, 1)
+	data[0] = []string{fmt.Sprintf("Addded Todo ID %d", todoID)}
+	drawTable([]string{}, data)
+
 	return nil
 }
 
@@ -94,7 +95,7 @@ func editAction(c *cli.Context) error {
 	var err error
 	todoManager := getManager()
 
-	if c.Args().Len() != 2 {
+	if c.NArg() != 2 {
 		return errors.New("Missing todo ID or message")
 	}
 
@@ -111,12 +112,14 @@ func editAction(c *cli.Context) error {
 		err = todoManager.Replace(todoID, todoStr)
 	}
 
-	// err = todoManager.Save()
 	if err != nil {
 		return err
 	}
 
-	fmt.Println("Todo updated!")
+	data := make([][]string, 1)
+	data[0] = []string{fmt.Sprintf("Updated Todo ID %d", todoID)}
+	drawTable([]string{}, data)
+
 	return nil
 }
 
@@ -124,7 +127,7 @@ func priAction(c *cli.Context) error {
 	var err error
 	todoManager := getManager()
 
-	if c.Args().Len() != 2 {
+	if c.NArg() != 2 {
 		return errors.New("Missing todo ID or priority")
 	}
 	todoNum := c.Args().Get(0)
@@ -140,7 +143,10 @@ func priAction(c *cli.Context) error {
 		return err
 	}
 
-	fmt.Println("Todo priority updated!")
+	data := make([][]string, 1)
+	data[0] = []string{fmt.Sprintf("Updated priority for Todo ID %d to %s", todoID, priorityArg)}
+	drawTable([]string{}, data)
+
 	return nil
 }
 
@@ -148,7 +154,7 @@ func depriAction(c *cli.Context) error {
 	var err error
 	todoManager := getManager()
 
-	if c.Args().Len() != 1 {
+	if c.NArg() != 1 {
 		return errors.New("No todo ID provided")
 	}
 	todoNum := c.Args().Get(0)
@@ -162,7 +168,10 @@ func depriAction(c *cli.Context) error {
 		return err
 	}
 
-	fmt.Println("Todo priority removed!")
+	data := make([][]string, 1)
+	data[0] = []string{fmt.Sprintf("Removed priority for Todo ID %d", todoID)}
+	drawTable([]string{}, data)
+
 	return nil
 }
 
@@ -170,7 +179,7 @@ func addprojectAction(c *cli.Context) error {
 	var err error
 	todoManager := getManager()
 
-	if c.Args().Len() != 2 {
+	if c.NArg() != 2 {
 		return errors.New("Missing todo ID or project")
 	}
 	todoNum := c.Args().Get(0)
@@ -185,7 +194,10 @@ func addprojectAction(c *cli.Context) error {
 		return err
 	}
 
-	fmt.Println("Project added!")
+	data := make([][]string, 1)
+	data[0] = []string{fmt.Sprintf("Added project \"%s\" to Todo ID %d", project, todoID)}
+	drawTable([]string{}, data)
+
 	return nil
 }
 
@@ -193,7 +205,7 @@ func addcontextAction(c *cli.Context) error {
 	var err error
 	todoManager := getManager()
 
-	if c.Args().Len() != 2 {
+	if c.NArg() != 2 {
 		return errors.New("Missing todo ID or context")
 	}
 	todoNum := c.Args().Get(0)
@@ -208,7 +220,10 @@ func addcontextAction(c *cli.Context) error {
 		return err
 	}
 
-	fmt.Println("Context added!")
+	data := make([][]string, 1)
+	data[0] = []string{fmt.Sprintf("Added context \"%s\" to Todo ID %d", context, todoID)}
+	drawTable([]string{}, data)
+
 	return nil
 }
 
@@ -216,7 +231,7 @@ func addattributeAction(c *cli.Context) error {
 	var err error
 	todoManager := getManager()
 
-	if c.Args().Len() != 2 {
+	if c.NArg() != 2 {
 		return errors.New("Missing todo ID or attribute")
 	}
 	todoNum := c.Args().Get(0)
@@ -231,7 +246,10 @@ func addattributeAction(c *cli.Context) error {
 		return err
 	}
 
-	fmt.Println("Attribute added!")
+	data := make([][]string, 1)
+	data[0] = []string{fmt.Sprintf("Added attribute \"%s\" to Todo ID %d", attr, todoID)}
+	drawTable([]string{}, data)
+
 	return nil
 }
 
@@ -239,7 +257,7 @@ func completeAction(c *cli.Context) error {
 	var err error
 	todoManager := getManager()
 
-	if c.Args().Len() != 1 {
+	if c.NArg() != 1 {
 		return errors.New("No todo ID provided")
 	}
 	todoNum := c.Args().Get(0)
@@ -253,7 +271,10 @@ func completeAction(c *cli.Context) error {
 		return err
 	}
 
-	fmt.Println("Todo completed!")
+	data := make([][]string, 1)
+	data[0] = []string{fmt.Sprintf("Completed Todo ID %d", todoID)}
+	drawTable([]string{}, data)
+
 	return nil
 }
 
@@ -261,7 +282,7 @@ func resumeAction(c *cli.Context) error {
 	var err error
 	todoManager := getManager()
 
-	if c.Args().Len() != 1 {
+	if c.NArg() != 1 {
 		return errors.New("No todo ID provided")
 	}
 	todoNum := c.Args().Get(0)
@@ -275,14 +296,17 @@ func resumeAction(c *cli.Context) error {
 		return err
 	}
 
-	fmt.Println("Todo resumed!")
+	data := make([][]string, 1)
+	data[0] = []string{fmt.Sprintf("Resumed Todo ID %d", todoID)}
+	drawTable([]string{}, data)
+
 	return nil
 }
 
 func rmAction(c *cli.Context) error {
 	var err error
 	todoManager := getManager()
-	if c.Args().Len() != 1 {
+	if c.NArg() != 1 {
 		return errors.New("No todo ID provided")
 	}
 	todoNum := c.Args().Get(0)
@@ -296,7 +320,10 @@ func rmAction(c *cli.Context) error {
 		return err
 	}
 
-	fmt.Println("Todo deleted!")
+	data := make([][]string, 1)
+	data[0] = []string{fmt.Sprintf("Removed Todo ID %d", todoID)}
+	drawTable([]string{}, data)
+
 	return nil
 }
 
@@ -491,7 +518,9 @@ func RunCli(args []string) {
 
 	err := app.Run(args)
 	if err != nil {
-		log.Println(err)
-		os.Exit(1)
+		header := []string{"Error"}
+		data := make([][]string, 1)
+		data[0] = []string{fmt.Sprintf("%s", err)}
+		drawTable(header, data)
 	}
 }
