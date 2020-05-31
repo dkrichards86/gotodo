@@ -2,6 +2,10 @@
 gotodo is a CLI client to manage your todos. It uses the ubiquitous [todo.txt](http://todotxt.org/)
 format for specifying todo attributes, and saves them to a file on your local system.
 
+![Tests](https://github.com/dkrichards86/gotodo/workflows/Tests/badge.svg)
+![Lint](https://github.com/dkrichards86/gotodo/workflows/Lint/badge.svg)
+[![Go Report Card](https://goreportcard.com/badge/github.com/dkrichards86/gotodo)](https://goreportcard.com/report/github.com/dkrichards86/gotodo)
+
 ## Usage
 ```
 NAME:
