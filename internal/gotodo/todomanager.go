@@ -66,27 +66,9 @@ func (me *TodoManager) Add(todoStr string) (int, error) {
 	return todo.TodoID, me.Storage.Create(todo)
 }
 
-// Update takes the ID number of an existing Todo and a parseable todo string and merges
-// contents of the existing todo and the update.
-func (me *TodoManager) Update(todoID int, todoStr string) error {
-	todo, err := me.Storage.Get(todoID)
-	if err != nil {
-		return err
-	}
-
-	newTodo := FromString(todoStr)
-
-	todo.Priority = newTodo.Priority
-	todo.Description = newTodo.Description
-	todo.Projects = newTodo.Projects
-	todo.Contexts = newTodo.Contexts
-
-	return me.Storage.Update(todoID, todo)
-}
-
-// Replace takes the ID number of an existing Todo and a parseable todo string and replaces all
+// Update takes the ID number of an existing Todo and a parseable todo string and replaces all
 // contents of the existing todo with the update.
-func (me *TodoManager) Replace(todoID int, todoStr string) error {
+func (me *TodoManager) Update(todoID int, todoStr string) error {
 	todo, err := me.Storage.Get(todoID)
 	if err != nil {
 		return err
@@ -102,6 +84,30 @@ func (me *TodoManager) Replace(todoID int, todoStr string) error {
 	todo.Projects = newTodo.Projects
 	todo.Contexts = newTodo.Contexts
 	todo.CustomAttributes = newTodo.CustomAttributes
+
+	return me.Storage.Update(todoID, todo)
+}
+
+// Prepend adds a string message to the front of a todo description
+func (me *TodoManager) Prepend(todoID int, prependStr string) error {
+	todo, err := me.Storage.Get(todoID)
+	if err != nil {
+		return err
+	}
+
+	todo.Description = prependStr + " " + todo.Description
+
+	return me.Storage.Update(todoID, todo)
+}
+
+// Append adds a string message to the end of a todo description
+func (me *TodoManager) Append(todoID int, appendStr string) error {
+	todo, err := me.Storage.Get(todoID)
+	if err != nil {
+		return err
+	}
+
+	todo.Description = todo.Description + " " + appendStr
 
 	return me.Storage.Update(todoID, todo)
 }

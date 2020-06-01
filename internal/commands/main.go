@@ -32,6 +32,10 @@ func lsAction(c *cli.Context) error {
 	var err error
 	todoManager := getManager()
 
+	if c.Bool("all") && c.Bool("done") {
+		return errors.New("Can't filter by both done and all status")
+	}
+
 	status := gotodo.ListPending
 	if c.Bool("all") {
 		status = gotodo.ListAll
@@ -99,6 +103,10 @@ func editAction(c *cli.Context) error {
 		return errors.New("Missing todo ID or message")
 	}
 
+	if c.Bool("append") && c.Bool("prepend") {
+		return errors.New("Can't append and prepend at the same time")
+	}
+
 	todoNum := c.Args().Get(0)
 	todoID, err := strconv.Atoi(todoNum)
 	if err != nil {
@@ -106,11 +114,15 @@ func editAction(c *cli.Context) error {
 	}
 
 	todoStr := c.Args().Get(1)
-	if !c.Bool("replace") {
-		err = todoManager.Update(todoID, todoStr)
-	} else {
-		err = todoManager.Replace(todoID, todoStr)
+	fn := todoManager.Update
+
+	if c.Bool("append") {
+		fn = todoManager.Append
+	} else if c.Bool("prepend") {
+		fn = todoManager.Prepend
 	}
+
+	err = fn(todoID, todoStr)
 
 	if err != nil {
 		return err
@@ -440,9 +452,14 @@ func RunCli(args []string) {
 				Usage: "Edits an existing todo",
 				Flags: []cli.Flag{
 					&cli.BoolFlag{
-						Name:  "replace",
+						Name:  "append",
 						Value: false,
-						Usage: "completely replace a todo",
+						Usage: "add message to the end of a todo",
+					},
+					&cli.BoolFlag{
+						Name:  "prepend",
+						Value: false,
+						Usage: "add message to the front of a todo",
 					},
 				},
 				ArgsUsage: "[line number] [todo text]",
