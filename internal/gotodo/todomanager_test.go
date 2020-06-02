@@ -182,41 +182,40 @@ func TestUpdate(t *testing.T) {
 
 	todo, err = todoManager.Storage.Get(0)
 	assert.NoError(t, err)
-	assert.Equal(t, "Mock TodoManager struct +gotodo @testing", todo.Description)
-	assert.Equal(t, ValidTime(ts), todo.CreationDate)
-	assert.Equal(t, 1, todo.Priority)
-}
-
-func TestReplace(t *testing.T) {
-	todoManager := getTestTodoManager()
-	todoStr := "(A) 2020-05-01 Mock TodoManager struct +gotodo @testing"
-	ts, err := time.Parse(TimeFormat, "2020-04-28")
-	assert.NoError(t, err)
-
-	items, err := todoManager.Storage.List()
-	assert.NoError(t, err)
-	assert.Equal(t, 2, len(items))
-
-	todo, err := todoManager.Storage.Get(0)
-	assert.NoError(t, err)
-	assert.Equal(t, "Work on unit tests @codehealth +gotodo", todo.Description)
-	assert.Equal(t, ValidTime(ts), todo.CreationDate)
-	assert.Equal(t, 2, todo.Priority)
-
-	todoManager.Replace(0, todoStr)
-
-	items, err = todoManager.Storage.List()
-	assert.NoError(t, err)
-	assert.Equal(t, 2, len(items))
-
-	todo, err = todoManager.Storage.Get(0)
-	assert.NoError(t, err)
 
 	assert.Equal(t, "Mock TodoManager struct +gotodo @testing", todo.Description)
 	ts2, err := time.Parse(TimeFormat, "2020-05-01")
 	assert.NoError(t, err)
 	assert.Equal(t, ValidTime(ts2), todo.CreationDate)
 	assert.Equal(t, 1, todo.Priority)
+}
+
+func TestPrepend(t *testing.T) {
+	todoManager := getTestTodoManager()
+
+	todo, err := todoManager.Storage.Get(0)
+	assert.NoError(t, err)
+	assert.Equal(t, "Work on unit tests @codehealth +gotodo", todo.Description)
+
+	todoManager.Prepend(0, "prepend string")
+
+	todo, err = todoManager.Storage.Get(0)
+	assert.NoError(t, err)
+	assert.Equal(t, "prepend string Work on unit tests @codehealth +gotodo", todo.Description)
+}
+
+func TestAppend(t *testing.T) {
+	todoManager := getTestTodoManager()
+
+	todo, err := todoManager.Storage.Get(0)
+	assert.NoError(t, err)
+	assert.Equal(t, "Work on unit tests @codehealth +gotodo", todo.Description)
+
+	todoManager.Append(0, "append string")
+
+	todo, err = todoManager.Storage.Get(0)
+	assert.NoError(t, err)
+	assert.Equal(t, "Work on unit tests @codehealth +gotodo append string", todo.Description)
 }
 
 func TestPrioritize(t *testing.T) {
