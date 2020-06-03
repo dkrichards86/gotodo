@@ -10,6 +10,8 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/olekukonko/tablewriter v0.0.4
+	github.com/spf13/cobra v1.0.0
+	github.com/spf13/viper v1.4.0
 	github.com/stretchr/testify v1.5.1
 	github.com/urfave/cli/v2 v2.2.0
 	golang.org/x/sys v0.0.0-20200523222454-059865788121 // indirect

@@ -2,11 +2,10 @@ package gotodo
 
 import (
 	"errors"
-	"os"
 	"strconv"
 
 	"github.com/boltdb/bolt"
-	homedir "github.com/mitchellh/go-homedir"
+	"github.com/mitchellh/go-homedir"
 )
 
 // Storage provides an interface for various todo storage mechanisms (in-memory, filesystem)
@@ -19,13 +18,12 @@ type Storage interface {
 }
 
 // BoltStorage implements Storage, saving items to a file in the filesystem
-type BoltStorage struct{}
-
-// TodoDir is the base directory for gotodo
-const todoDir = ".gotodo"
+type BoltStorage struct {
+	Bucket []byte
+}
 
 // TodoDBFile is the name of the todo file in the user's home directory
-const todoDBFile = "todo.db"
+const todoDBFile = ".gotodo.db"
 
 // getHomeDir returns the user's home directory
 func getHomeDir() (string, error) {
@@ -42,35 +40,9 @@ func getHomeDir() (string, error) {
 	return absPath, nil
 }
 
-// makeTodoDir creates a directory at dirPath
-func makeTodoDir(dirPath string) (string, error) {
-	err := os.Mkdir(dirPath, 0755)
-	if err != nil {
-		return "", nil
-	}
-	return dirPath, nil
-}
-
-// getTodoDir returns the absolute path to the gotodo directory
-func getTodoDir() (string, error) {
-	homePath, err := getHomeDir()
-	if err != nil {
-		return "", err
-	}
-
-	dirPath := homePath + "/" + todoDir
-
-	_, err = os.Stat(dirPath)
-	if os.IsNotExist(err) {
-		return makeTodoDir(dirPath)
-	}
-
-	return dirPath, nil
-}
-
 // getDB returns an instance of *bolt.DB
 func (me *BoltStorage) getDB() (*bolt.DB, error) {
-	absPath, err := getTodoDir()
+	absPath, err := getHomeDir()
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +54,7 @@ func (me *BoltStorage) getDB() (*bolt.DB, error) {
 	}
 
 	err = db.Update(func(tx *bolt.Tx) error {
-		_, err := tx.CreateBucketIfNotExists([]byte("Todos"))
+		_, err := tx.CreateBucketIfNotExists(me.Bucket)
 		if err != nil {
 			return err
 		}
@@ -98,7 +70,7 @@ func (me *BoltStorage) getDB() (*bolt.DB, error) {
 // checkKey checks for the existence of a key in Bolt.
 func (me *BoltStorage) checkKey(key string, db *bolt.DB) error {
 	return db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte("Todos"))
+		b := tx.Bucket(me.Bucket)
 
 		v := b.Get([]byte(key))
 		if v == nil {
@@ -118,7 +90,7 @@ func (me *BoltStorage) Create(todo *Todo) error {
 	defer db.Close()
 
 	return db.Update(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte("Todos"))
+		b := tx.Bucket(me.Bucket)
 		id, _ := b.NextSequence()
 		todo.TodoID = int(id)
 		key := strconv.Itoa(todo.TodoID)
@@ -144,7 +116,7 @@ func (me *BoltStorage) Get(todoID int) (*Todo, error) {
 	}
 
 	err = db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte("Todos"))
+		b := tx.Bucket(me.Bucket)
 		v := b.Get([]byte(key))
 		todo = FromString(string(v))
 		todo.TodoID = todoID
@@ -169,7 +141,7 @@ func (me *BoltStorage) List() (TodoList, error) {
 	defer db.Close()
 
 	err = db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte("Todos"))
+		b := tx.Bucket(me.Bucket)
 		c := b.Cursor()
 
 		for k, v := c.First(); k != nil; k, v = c.Next() {
@@ -202,7 +174,7 @@ func (me *BoltStorage) Update(todoID int, todo *Todo) error {
 	}
 
 	return db.Update(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte("Todos"))
+		b := tx.Bucket(me.Bucket)
 		return b.Put([]byte(key), []byte(value))
 	})
 }
@@ -224,7 +196,7 @@ func (me *BoltStorage) Delete(todoID int) error {
 	}
 
 	return db.Update(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte("Todos"))
+		b := tx.Bucket(me.Bucket)
 		return b.Delete([]byte(key))
 	})
 }
