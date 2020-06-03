@@ -37,7 +37,7 @@ func FromString(todoStr string) *Todo {
 
 	// If we have more than 1 part and the first part is x, consider the Todo complete.
 	complete = false
-	if len(parts) > 1 && isComplete(parts[0]) {
+	if len(parts) > 1 && isCompleteToken(parts[0]) {
 		complete = true
 		parts = parts[1:]
 	}
@@ -45,7 +45,7 @@ func FromString(todoStr string) *Todo {
 	// If we have more than 1 part and the first part is a valid priority flag, translate
 	// the priority.
 	priority = 0
-	if len(parts) > 1 && isPriority(parts[0]) {
+	if len(parts) > 1 && isPriorityToken(parts[0]) {
 		end := len(parts[0])
 		arg := parts[0][1 : end-1]
 		priority = parsePriority(arg)

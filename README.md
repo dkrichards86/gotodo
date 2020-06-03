@@ -1,4 +1,14 @@
 # gotodo
+```
+                __            __
+   ____  ____  / /_____  ____/ /___
+  / __ `/ __ \/ __/ __ \/ __  / __ \
+ / /_/ / /_/ / /_/ /_/ / /_/ / /_/ /
+ \__, /\____/\__/\____/\__,_/\____/
+/____/
+
+```
+
 gotodo is a CLI client to manage your todos. It uses the ubiquitous [todo.txt](http://todotxt.org/)
 format for specifying todo attributes, and saves them to a file on your local system.
 

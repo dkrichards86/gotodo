@@ -7,21 +7,21 @@ import (
 )
 
 func TestIsCompleteValidMark(t *testing.T) {
-	assert.Equal(t, true, isComplete("x"))
+	assert.Equal(t, true, isCompleteToken("x"))
 }
 
 func TestIsCompleteNoMark(t *testing.T) {
-	assert.Equal(t, false, isComplete("Hello, world."))
+	assert.Equal(t, false, isCompleteToken("Hello, world."))
 }
 
 func TestIsCompleteInvalidMark(t *testing.T) {
-	assert.Equal(t, false, isComplete("X"))
-	assert.Equal(t, false, isComplete("y"))
-	assert.Equal(t, false, isComplete("-"))
-	assert.Equal(t, false, isComplete(" "))
-	assert.Equal(t, false, isComplete("[x]"))
-	assert.Equal(t, false, isComplete("x "))
-	assert.Equal(t, false, isComplete(" x"))
+	assert.Equal(t, false, isCompleteToken("X"))
+	assert.Equal(t, false, isCompleteToken("y"))
+	assert.Equal(t, false, isCompleteToken("-"))
+	assert.Equal(t, false, isCompleteToken(" "))
+	assert.Equal(t, false, isCompleteToken("[x]"))
+	assert.Equal(t, false, isCompleteToken("x "))
+	assert.Equal(t, false, isCompleteToken(" x"))
 }
 
 func TestParsePriority(t *testing.T) {
@@ -38,13 +38,13 @@ func TestParsePriority(t *testing.T) {
 }
 
 func TestIsPriority(t *testing.T) {
-	assert.Equal(t, true, isPriority("(A)"))
-	assert.Equal(t, true, isPriority("(A)"))
-	assert.Equal(t, true, isPriority("(Aa)"))
-	assert.Equal(t, true, isPriority("(aA)"))
-	assert.Equal(t, false, isPriority("(A"))
-	assert.Equal(t, false, isPriority("(AA"))
-	assert.Equal(t, false, isPriority("A)"))
+	assert.Equal(t, true, isPriorityToken("(A)"))
+	assert.Equal(t, true, isPriorityToken("(A)"))
+	assert.Equal(t, true, isPriorityToken("(Aa)"))
+	assert.Equal(t, true, isPriorityToken("(aA)"))
+	assert.Equal(t, false, isPriorityToken("(A"))
+	assert.Equal(t, false, isPriorityToken("(AA"))
+	assert.Equal(t, false, isPriorityToken("A)"))
 }
 
 func TestParseProjectTags(t *testing.T) {
