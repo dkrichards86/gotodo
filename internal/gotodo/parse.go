@@ -20,13 +20,13 @@ func letterIndex(char string) int {
 	return -1
 }
 
-// isComplete determines whether or not a token is a todo.txt complete flag
-func isComplete(token string) bool {
+// isCompleteToken determines whether or not a token is a todo.txt complete flag
+func isCompleteToken(token string) bool {
 	return len(token) == 1 && string(token[0]) == "x"
 }
 
-// isPriority determines whether or not a token is a valid todo.txt priority
-func isPriority(arg string) bool {
+// isPriorityToken determines whether or not a token is a valid todo.txt priority
+func isPriorityToken(arg string) bool {
 	// We need at least 3 characters in a priority- open paren, close paren, priority letter(s)
 	if len(arg) < 3 {
 		return false
@@ -40,9 +40,14 @@ func isPriority(arg string) bool {
 
 	rest := arg[start+1 : end]
 
+	return IsPriorityString(rest)
+}
+
+// IsPriorityString determines whether or not a string is a valid todo.txt priority
+func IsPriorityString(arg string) bool {
 	// Do base-26 math to determine a priority score, where A is 1, AA is 27, AAA is 677, etc
 	// If any character is not a capital letter, invalidate the score and return 0
-	for _, char := range rest {
+	for _, char := range arg {
 		value := letterIndex(strings.ToUpper(string(char)))
 		if value == -1 {
 			return false
@@ -52,7 +57,7 @@ func isPriority(arg string) bool {
 	return true
 }
 
-// parsePriority determines whether or not a string is a todo.txt priority score
+// parsePriority converts a priority string into an integer score
 func parsePriority(arg string) int {
 	total := 0
 
