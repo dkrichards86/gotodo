@@ -13,16 +13,16 @@ type Attributes map[string]string
 
 // Todo contains information about a specific Todo
 type Todo struct {
-	TodoID           int
-	Complete         bool
-	Priority         int
-	CompletionDate   NullTime
-	CreationDate     NullTime
-	DueDate          NullTime
-	Description      string
-	Projects         Tags
-	Contexts         Tags
-	CustomAttributes Attributes
+	TodoID         int
+	Complete       bool
+	Priority       int
+	CompletionDate NullTime
+	CreationDate   NullTime
+	DueDate        NullTime
+	Description    string
+	Projects       Tags
+	Contexts       Tags
+	Attributes     Attributes
 }
 
 // FromString translates a todotxt string into a *Todo
@@ -102,70 +102,70 @@ func FromString(todoStr string) *Todo {
 	description = strings.Join(parts, " ")
 
 	return &Todo{
-		Complete:         complete,
-		Priority:         priority,
-		CompletionDate:   completionDate,
-		CreationDate:     creationDate,
-		DueDate:          dueDate,
-		Description:      description,
-		Projects:         projects,
-		Contexts:         contexts,
-		CustomAttributes: customAttrs,
+		Complete:       complete,
+		Priority:       priority,
+		CompletionDate: completionDate,
+		CreationDate:   creationDate,
+		DueDate:        dueDate,
+		Description:    description,
+		Projects:       projects,
+		Contexts:       contexts,
+		Attributes:     customAttrs,
 	}
 }
 
 // String converts a Todo into a todotxt-formatted string
-func (me *Todo) String() string {
+func (t *Todo) String() string {
 	parts := make([]string, 0)
 
-	if me.Complete {
+	if t.Complete {
 		parts = append(parts, "x")
 	}
 
-	if me.Priority > 0 {
-		priStr := fmt.Sprintf("(%s)", unparsePriority(me.Priority))
+	if t.Priority > 0 {
+		priStr := fmt.Sprintf("(%s)", unparsePriority(t.Priority))
 		parts = append(parts, priStr)
 	}
 
-	if me.Complete && me.CompletionDate.Valid {
-		parts = append(parts, me.CompletionDate.Display())
+	if t.Complete && t.CompletionDate.Valid {
+		parts = append(parts, t.CompletionDate.Display())
 	}
 
-	if me.CreationDate.Valid {
-		parts = append(parts, me.CreationDate.Display())
+	if t.CreationDate.Valid {
+		parts = append(parts, t.CreationDate.Display())
 	}
 
-	parts = append(parts, me.Description)
+	parts = append(parts, t.Description)
 
 	return strings.Join(parts, " ")
 }
 
 // hasProject checks a todo.Projects for a specific project
-func (me *Todo) hasProject(project string) bool {
-	if len(me.Projects) == 0 {
+func (t *Todo) hasProject(project string) bool {
+	if len(t.Projects) == 0 {
 		return false
 	}
 
-	_, exists := me.Projects[project]
+	_, exists := t.Projects[project]
 	return exists
 }
 
 // hasContext checks a todo.Contexts for a specific context
-func (me *Todo) hasContext(context string) bool {
-	if len(me.Contexts) == 0 {
+func (t *Todo) hasContext(context string) bool {
+	if len(t.Contexts) == 0 {
 		return false
 	}
 
-	_, exists := me.Contexts[context]
+	_, exists := t.Contexts[context]
 	return exists
 }
 
-// hasAttribute checks a todo.CustomAttributes for a specific attribute
-func (me *Todo) hasAttribute(attribute string) bool {
-	if len(me.CustomAttributes) == 0 {
+// hasAttribute checks a todo.Attributes for a specific attribute
+func (t *Todo) hasAttribute(attribute string) bool {
+	if len(t.Attributes) == 0 {
 		return false
 	}
 
-	_, exists := me.CustomAttributes[attribute]
+	_, exists := t.Attributes[attribute]
 	return exists
 }
