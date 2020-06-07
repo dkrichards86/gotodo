@@ -57,8 +57,9 @@ func initConfig() {
 
 func getManager() *gotodo.TodoManager {
 	bucket := viper.Get("bucket").(string)
-	storage := &gotodo.BoltStorage{Bucket: []byte(bucket)}
-	return &gotodo.TodoManager{Storage: storage}
+	return gotodo.NewTodoManager(
+		gotodo.WithBoltStorage(bucket),
+	)
 }
 
 func drawTable(header []string, data [][]string) {

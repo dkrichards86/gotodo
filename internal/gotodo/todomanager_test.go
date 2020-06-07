@@ -8,22 +8,28 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func withTestStorage() TodoManagerOptions {
+	return func(tm *TodoManager) {
+		items := make(TodoList, 0)
+		todoStrs := []string{
+			"(B) 2020-04-28 Work on unit tests @codehealth +gotodo",
+			"x 2020-04-29 2020-04-28 Add parser test +gotodo due:2020-05-01",
+		}
+
+		for i, todoStr := range todoStrs {
+			todo := FromString(todoStr)
+			todo.TodoID = i + 1
+			items = append(items, todo)
+		}
+
+		tm.Storage = &TestStorage{items}
+	}
+}
+
 func getTestTodoManager() *TodoManager {
-	items := make(TodoList, 0)
-	todoStrs := []string{
-		"(B) 2020-04-28 Work on unit tests @codehealth +gotodo",
-		"x 2020-04-29 2020-04-28 Add parser test +gotodo due:2020-05-01",
-	}
-
-	for i, todoStr := range todoStrs {
-		todo := FromString(todoStr)
-		todo.TodoID = i + 1
-		items = append(items, todo)
-	}
-
-	storage := &TestStorage{items}
-
-	return &TodoManager{storage}
+	return NewTodoManager(
+		withTestStorage(),
+	)
 }
 
 func sliceContains(needle string, haystack []string) bool {
