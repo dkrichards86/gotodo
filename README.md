@@ -1,4 +1,5 @@
 # gotodo
+
 ```
                 __            __
    ____  ____  / /_____  ____/ /___
@@ -17,6 +18,7 @@ format for specifying todo attributes, and saves them to a file on your local sy
 [![Go Report Card](https://goreportcard.com/badge/github.com/dkrichards86/gotodo)](https://goreportcard.com/report/github.com/dkrichards86/gotodo)
 
 ## Usage
+
 ```
 NAME:
    gotodo - CLI client to manage your todos
@@ -30,9 +32,6 @@ COMMANDS:
    edit          Edits an existing todo
    pri           Updates the priority of a todo
    depri         Removes the priority from a todo
-   addproject    Adds a new project to a todo
-   addcontext    Adds a new context to a todo
-   addattribute  Adds a new attribute to a todo
    complete, do  Marks a todo as complete
    resume        Marks a todo as incomplete
    remove, rm    Removes a todo
@@ -47,5 +46,5 @@ GLOBAL OPTIONS:
 
 ## Contributing
 
-If you spot bugs or have features that you'd really like to see in gotodo, please check out the 
+If you spot bugs or have features that you'd really like to see in gotodo, please check out the
 [contributing page](.github/CONTRIBUTING.md)

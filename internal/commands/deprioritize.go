@@ -8,8 +8,8 @@ import (
 )
 
 var depriCmd = &cobra.Command{
-	Use:     "deprioritize [TODO ID]",
-	Short:   "Removes the priority from a todo",
+	Use:     "deprioritize TODOID",
+	Short:   "Remove the priority from a todo",
 	Aliases: []string{"depri"},
 	Args:    cobra.ExactArgs(1),
 	RunE:    depriFunc,

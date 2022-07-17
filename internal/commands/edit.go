@@ -9,8 +9,8 @@ import (
 )
 
 var editCmd = &cobra.Command{
-	Use:   "edit [TODO ID] [TODO]",
-	Short: "Edit a new todo",
+	Use:   "edit TODOID TODO",
+	Short: "Edit a todo",
 	Args:  cobra.ExactArgs(2),
 	RunE:  editFunc,
 }

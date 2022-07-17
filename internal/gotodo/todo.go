@@ -52,8 +52,10 @@ func FromString(todoStr string) *Todo {
 		parts = parts[1:]
 	}
 
-	// Check for zero, one or two times. If there are zero, we move along. If there is one time,
-	// it is creation time. If there are two times and the todo is complete, the first is completed
+	// Check for zero, one or two times.
+	// If there are zero, we move along.
+	// If there is one time, it is creation time.
+	// If there are two times and the todo is complete, the first is completed
 	// time and the second is created.
 	if len(parts) > 1 {
 		firstTime := parseDate(parts[0])
@@ -64,6 +66,9 @@ func FromString(todoStr string) *Todo {
 					completionDate = firstTime
 					creationDate = secondTime
 					parts = parts[2:]
+				} else if complete {
+					completionDate = firstTime
+					parts = parts[1:]
 				} else {
 					creationDate = firstTime
 					parts = parts[1:]

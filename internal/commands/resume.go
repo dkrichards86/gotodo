@@ -8,7 +8,7 @@ import (
 )
 
 var resumeCmd = &cobra.Command{
-	Use:     "resume [TODO ID]",
+	Use:     "resume TODOID",
 	Short:   "Mark a todo as incomplete",
 	Aliases: []string{"undo"},
 	Args:    cobra.ExactArgs(1),

@@ -1,7 +1,6 @@
 package gotodo
 
 import (
-	"strings"
 	"testing"
 	"time"
 
@@ -252,42 +251,6 @@ func TestDeprioritize(t *testing.T) {
 	assert.Equal(t, 0, todo.Priority)
 }
 
-func TestAddProject(t *testing.T) {
-	todoManager := getTestTodoManager()
-
-	todo, err := todoManager.Storage.Get(0)
-	assert.NoError(t, err)
-	assert.Equal(t, 1, len(todo.Projects))
-
-	todoManager.AddProject(0, "testing")
-
-	todo, err = todoManager.Storage.Get(0)
-	assert.NoError(t, err)
-	assert.Equal(t, 2, len(todo.Projects))
-
-	_, ok := todo.Projects["testing"]
-	assert.Equal(t, true, ok)
-	assert.Equal(t, true, strings.Contains(todo.Description, "+testing"))
-}
-
-func TestAddContext(t *testing.T) {
-	todoManager := getTestTodoManager()
-
-	todo, err := todoManager.Storage.Get(0)
-	assert.NoError(t, err)
-	assert.Equal(t, 1, len(todo.Contexts))
-
-	todoManager.AddContext(0, "testing")
-
-	todo, err = todoManager.Storage.Get(0)
-	assert.NoError(t, err)
-	assert.Equal(t, 2, len(todo.Contexts))
-
-	_, ok := todo.Contexts["testing"]
-	assert.Equal(t, true, ok)
-	assert.Equal(t, true, strings.Contains(todo.Description, "@testing"))
-}
-
 func TestComplete(t *testing.T) {
 	todoManager := getTestTodoManager()
 	now := ValidTime(time.Now())
@@ -406,38 +369,4 @@ func TestDeleteLast(t *testing.T) {
 	t1, err = todoManager.Storage.Get(0)
 	assert.NoError(t, err)
 	assert.Equal(t, t1.Description, "Work on unit tests @codehealth +gotodo")
-}
-
-func TestListProjecs(t *testing.T) {
-	todoManager := getTestTodoManager()
-	todoStr := "(A) 2020-05-01 Mock TodoManager struct +gotodo @testing"
-	todoManager.Add(todoStr)
-
-	items, err := todoManager.ListProjects()
-	assert.NoError(t, err)
-	assert.Equal(t, len(items), 1)
-	assert.Equal(t, sliceContains("gotodo", items), true)
-}
-
-func TestListContexts(t *testing.T) {
-	todoManager := getTestTodoManager()
-	todoStr := "(A) 2020-05-01 Mock TodoManager struct +gotodo @testing"
-	todoManager.Add(todoStr)
-
-	items, err := todoManager.ListContexts()
-	assert.NoError(t, err)
-	assert.Equal(t, len(items), 2)
-	assert.Equal(t, sliceContains("codehealth", items), true)
-	assert.Equal(t, sliceContains("testing", items), true)
-}
-
-func TestListAttributes(t *testing.T) {
-	todoManager := getTestTodoManager()
-	todoStr := "(A) 2020-05-01 Mock TodoManager struct +gotodo @testing"
-	todoManager.Add(todoStr)
-
-	items, err := todoManager.ListAttributes()
-	assert.NoError(t, err)
-	assert.Equal(t, len(items), 1)
-	assert.Equal(t, sliceContains("due", items), true)
 }

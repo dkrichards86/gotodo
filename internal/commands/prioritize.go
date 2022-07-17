@@ -10,7 +10,7 @@ import (
 )
 
 var priCmd = &cobra.Command{
-	Use:     "prioritize [TODO ID] [PRIORITY]",
+	Use:     "prioritize TODOID PRIORITY",
 	Short:   "Updates the priority of a todo",
 	Aliases: []string{"pri"},
 	Args: func(cmd *cobra.Command, args []string) error {

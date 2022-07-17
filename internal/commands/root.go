@@ -1,14 +1,11 @@
 package commands
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/dkrichards86/gotodo/internal/gotodo"
-	"github.com/mitchellh/go-homedir"
 	"github.com/olekukonko/tablewriter"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var cfgFile string
@@ -26,39 +23,12 @@ func Execute() {
 }
 
 func init() {
-	cobra.OnInitialize(initConfig)
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.gotodo.yaml)")
-	rootCmd.PersistentFlags().StringVar(&todoList, "bucket", "", "todo bucket to use")
-
-	viper.BindPFlag("bucket", rootCmd.PersistentFlags().Lookup("bucket"))
-}
-
-func initConfig() {
-	if cfgFile != "" {
-		viper.SetConfigFile(cfgFile)
-	} else {
-		home, err := homedir.Dir()
-		if err != nil {
-			fmt.Println(err)
-			os.Exit(1)
-		}
-		viper.AddConfigPath(home)
-		viper.SetConfigName(".gotodo")
-	}
-
-	viper.SetDefault("bucket", "Todos")
-	viper.AutomaticEnv()
-	err := viper.ReadInConfig()
-	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
-	}
+	rootCmd.PersistentFlags().StringVar(&todoList, "bucket", "todos", "todo bucket to use")
 }
 
 func getManager() *gotodo.TodoManager {
-	bucket := viper.Get("bucket").(string)
 	return gotodo.NewTodoManager(
-		gotodo.WithBoltStorage(bucket),
+		gotodo.WithBoltStorage(todoList),
 	)
 }
 

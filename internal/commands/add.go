@@ -7,7 +7,7 @@ import (
 )
 
 var addCmd = &cobra.Command{
-	Use:   "add [TODO]",
+	Use:   "add TODO",
 	Short: "Create a new todo",
 	Args:  cobra.ExactArgs(1),
 	RunE:  addFunc,

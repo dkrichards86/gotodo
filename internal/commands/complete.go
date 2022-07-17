@@ -8,8 +8,8 @@ import (
 )
 
 var completeCmd = &cobra.Command{
-	Use:     "complete [TODO ID]",
-	Short:   "marks a todo as complete",
+	Use:     "complete TODOID",
+	Short:   "Mark a todo as complete",
 	Aliases: []string{"do"},
 	Args:    cobra.ExactArgs(1),
 	RunE:    completeFunc,

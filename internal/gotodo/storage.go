@@ -17,14 +17,6 @@ type Storage interface {
 	Delete(todoID int) error
 }
 
-// BoltStorage implements Storage, saving items to a file in the filesystem
-type BoltStorage struct {
-	Bucket []byte
-}
-
-// TodoDBFile is the name of the todo file in the user's home directory
-const todoDBFile = ".gotodo.db"
-
 // getHomeDir returns the user's home directory
 func getHomeDir() (string, error) {
 	relPath, err := homedir.Dir()
@@ -38,6 +30,14 @@ func getHomeDir() (string, error) {
 	}
 
 	return absPath, nil
+}
+
+// TodoDBFile is the name of the todo file in the user's home directory
+const todoDBFile = ".gotodo.db"
+
+// BoltStorage implements Storage, saving items to a file in the filesystem
+type BoltStorage struct {
+	Bucket []byte
 }
 
 // getDB returns an instance of *bolt.DB

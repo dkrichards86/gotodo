@@ -8,7 +8,7 @@ import (
 )
 
 var removeCmd = &cobra.Command{
-	Use:     "remove [TODO ID]",
+	Use:     "remove TODOID",
 	Short:   "Deletes a todo",
 	Aliases: []string{"rm"},
 	Args:    cobra.ExactArgs(1),

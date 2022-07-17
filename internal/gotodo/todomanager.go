@@ -1,7 +1,6 @@
 package gotodo
 
 import (
-	"strings"
 	"time"
 )
 
@@ -173,57 +172,6 @@ func (tm *TodoManager) Deprioritize(todoID int) error {
 	return tm.Storage.Update(todoID, todo)
 }
 
-// AddProject adds a project tag to a todo
-func (tm *TodoManager) AddProject(todoID int, project string) error {
-	todo, err := tm.Storage.Get(todoID)
-	if err != nil {
-		return err
-	}
-
-	if _, ok := todo.Projects[project]; !ok {
-		todo.Projects[project] = void{}
-		todo.Description = todo.Description + " +" + project
-	}
-
-	return tm.Storage.Update(todoID, todo)
-}
-
-// AddContext adds a context tag to a todo
-func (tm *TodoManager) AddContext(todoID int, context string) error {
-	todo, err := tm.Storage.Get(todoID)
-	if err != nil {
-		return err
-	}
-
-	if _, ok := todo.Contexts[context]; !ok {
-		todo.Contexts[context] = void{}
-		todo.Description = todo.Description + " @" + context
-	}
-
-	return tm.Storage.Update(todoID, todo)
-}
-
-// AddAttribute adds a context tag to a todo
-func (tm *TodoManager) AddAttribute(todoID int, attr string) error {
-	todo, err := tm.Storage.Get(todoID)
-	if err != nil {
-		return err
-	}
-
-	if strings.Contains(attr, ":") {
-		parts := strings.Split(attr, ":")
-		// If the attribute has multiple colons, use the first part as key and concat the rest
-		// as value
-		key := parts[0]
-		value := strings.Join(parts[1:], ":")
-
-		todo.Attributes[key] = value
-		todo.Description = todo.Description + " " + attr
-	}
-
-	return tm.Storage.Update(todoID, todo)
-}
-
 // Complete changes the completion status of a Todo to done and adds CompletionDate
 func (tm *TodoManager) Complete(todoID int) error {
 	todo, err := tm.Storage.Get(todoID)
@@ -253,76 +201,4 @@ func (tm *TodoManager) Resume(todoID int) error {
 // Delete drops the item specified by todoId from a TodoManager
 func (tm *TodoManager) Delete(todoID int) error {
 	return tm.Storage.Delete(todoID)
-}
-
-// ListProjects returns a list of unique projects
-func (tm *TodoManager) ListProjects() ([]string, error) {
-	projs := make([]string, 0)
-	set := make(map[string]void)
-	var elem void
-
-	items, err := tm.Storage.List()
-	if err != nil {
-		return projs, err
-	}
-
-	for _, todo := range items {
-		for project := range todo.Projects {
-			set[project] = elem
-		}
-	}
-
-	for key := range set {
-		projs = append(projs, key)
-	}
-
-	return projs, nil
-}
-
-// ListContexts returns a list of unique contexts
-func (tm *TodoManager) ListContexts() ([]string, error) {
-	ctxs := make([]string, 0)
-	set := make(map[string]void)
-	var elem void
-
-	items, err := tm.Storage.List()
-	if err != nil {
-		return ctxs, err
-	}
-
-	for _, todo := range items {
-		for context := range todo.Contexts {
-			set[context] = elem
-		}
-	}
-
-	for key := range set {
-		ctxs = append(ctxs, key)
-	}
-
-	return ctxs, nil
-}
-
-// ListAttributes returns a list of unique attribute keys
-func (tm *TodoManager) ListAttributes() ([]string, error) {
-	attrs := make([]string, 0)
-	set := make(map[string]void)
-	var elem void
-
-	items, err := tm.Storage.List()
-	if err != nil {
-		return attrs, err
-	}
-
-	for _, todo := range items {
-		for attr := range todo.Attributes {
-			set[attr] = elem
-		}
-	}
-
-	for key := range set {
-		attrs = append(attrs, key)
-	}
-
-	return attrs, nil
 }
